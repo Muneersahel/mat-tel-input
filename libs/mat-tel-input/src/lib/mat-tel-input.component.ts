@@ -67,7 +67,7 @@ class matTelInputBase {
   styleUrls: ['./mat-tel-input.component.scss'],
   providers: [
     CountryCode,
-    { provide: MatFormFieldControl, useExisting: MatTelInputComponent },
+    { provide: MatFormFieldControl, useExisting: MatTelInput },
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: { floatLabel: 'always' },
@@ -93,7 +93,7 @@ class matTelInputBase {
     SearchCountryPipe,
   ],
 })
-export class MatTelInputComponent
+export class MatTelInput
   extends matTelInputBase
   implements OnInit, DoCheck, OnDestroy
 {
@@ -104,7 +104,7 @@ export class MatTelInputComponent
   @ViewChild('focusable', { static: false }) focusable!: ElementRef;
 
   @HostBinding()
-  id = `mat-tel-input-${MatTelInputComponent.nextId++}`;
+  id = `mat-tel-input-${MatTelInput.nextId++}`;
   @HostBinding('class.floating')
   get shouldLabelFloat(): boolean {
     return this.focused || !this.empty;

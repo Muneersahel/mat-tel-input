@@ -12,14 +12,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RouterModule } from '@angular/router';
 
-import { MatTelInputComponent } from 'mat-tel-input';
+import { MatTelInput } from 'mat-tel-input';
 
 @Component({
   imports: [
     MatFormFieldModule,
     MatInputModule,
     RouterModule,
-    MatTelInputComponent,
+    MatTelInput,
     ReactiveFormsModule,
     JsonPipe,
     MatSlideToggleModule,

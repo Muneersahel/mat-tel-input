@@ -12,7 +12,6 @@
   <form [formGroup]="form1">
     <mat-form-field class="w-full" appearance="outline" [floatLabel]="'always'">
       <mat-label>Phone</mat-label>
-      <!-- [cssClass]="'custom'" -->
       <mat-tel-input
         [preferredCountries]="['us', 'ca']"
         enablePlaceholder
@@ -20,7 +19,6 @@
         [formControl]="form1.controls.phone"
         describedBy="phoneInput"
         required
-        #phone
         maxLength="20"
       ></mat-tel-input>
       <mat-error>Invalid phone</mat-error>
