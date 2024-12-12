@@ -1,3 +1,13 @@
+## 19.0.3-2 (2024-12-12)
+
+### 🩹 Fixes
+
+- include README and LICENSE in build assets for mat-tel-input library ([53db148](https://github.com/Muneersahel/mat-tel-input/commit/53db148))
+
+### ❤️ Thank You
+
+- Muneersahel @Muneersahel
+
 ## 19.0.3-1 (2024-12-12)
 
 This was a version bump only, there were no code changes.
