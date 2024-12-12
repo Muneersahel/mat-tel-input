@@ -1,3 +1,13 @@
+## 19.0.3 (2024-12-12)
+
+### 🚀 Features
+
+- add preVersionCommand to copy README and LICENSE for release process ([6715d74](https://github.com/Muneersahel/mat-tel-input/commit/6715d74))
+
+### ❤️ Thank You
+
+- Muneersahel @Muneersahel
+
 ## 19.0.3-2 (2024-12-12)
 
 ### 🩹 Fixes
