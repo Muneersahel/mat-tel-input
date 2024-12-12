@@ -13,7 +13,7 @@
     <mat-form-field class="w-full" appearance="outline" [floatLabel]="'always'">
       <mat-label>Phone</mat-label>
       <mat-tel-input
-        [preferredCountries]="['us', 'ca']"
+        [preferredCountries]="['us', 'tz']"
         enablePlaceholder
         enableSearch
         [formControl]="form1.controls.phone"
@@ -64,10 +64,6 @@
       <div>
         <strong>phone:</strong>
         <pre>{{ phone }}</pre>
-      </div>
-      <div>
-        <strong>name:</strong>
-        <pre>{{ name }}</pre>
       </div>
     </div>
   </div>
