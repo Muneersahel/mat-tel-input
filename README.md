@@ -37,10 +37,10 @@ This is a fork from the [ngx-mat-intl-tel-input](https://github.com/tanansatpal/
 
 ### Import
 
-Add `NgxMatInputTelComponent` to your component file:
+Add `MatTelInput` to your component file:
 
 ```ts
-imports: [NgxMatInputTelComponent];
+imports: [MatTelInput];
 ```
 
 ## Example
@@ -48,38 +48,40 @@ imports: [NgxMatInputTelComponent];
 Refer to main app in this repository for working example.
 
 ```html
-<form #f="ngForm" [formGroup]="phoneForm">
-  <mat-tel-input [preferredCountries]="['us', 'gb']" [enablePlaceholder]="true" [enableSearch]="true" name="phone" describedBy="phoneInput" formControlName="phone"></mat-tel-input>
-</form>
+<mat-form-field [floatLabel]="'always'">
+  <mat-label>Phone</mat-label>
+  <mat-tel-input [preferredCountries]="['us', 'tz']" [enablePlaceholder]="true" [enableSearch]="true" name="phone" describedBy="phoneInput" formControlName="phone" />
+</mat-form-field>
 ```
 
 ```html
 
-<form #f="ngForm" [formGroup]="phoneForm">
+<mat-form-field [floatLabel]="'always'">
+  <mat-label>Phone</mat-label>
   <mat-tel-input
-  [preferredCountries]="['us', 'gb']"
-  [enablePlaceholder]="true"
-  [enableSearch]="true"
-  name="phone"
-  autocomplete="tel"
-  (countryChanged)="yourComponentMethodToTreatyCountryChangedEvent($event)" // $event is a instance of current select Country
-  formControlName="phone"></mat-tel-input>
-</form>
+    [preferredCountries]="['us', 'gb']"
+    [enablePlaceholder]="true"
+    [enableSearch]="true"
+    name="phone"
+    autocomplete="tel"
+    (countryChanged)="yourComponentMethodToTreatyCountryChangedEvent($event)" // $event is a instance of current select Country
+    formControlName="phone"
+  />
+</mat-form-field>
 
 ```
 
 If you want to show the sample number for the country selected or errors , use mat-hint anf mat-error as
 
 ```html
-<form #f="ngForm" [formGroup]="phoneForm">
-  <mat-tel-input [preferredCountries]="['us', 'gb']" [onlyCountries]="['us', 'gb', 'es']" [enablePlaceholder]="true" name="phone" autocomplete="tel" formControlName="phone" #phone></mat-tel-input>
+<mat-form-field [floatLabel]="'always'">
+  <mat-label>Phone</mat-label>
+  <mat-tel-input [preferredCountries]="['us', 'tz']" [enablePlaceholder]="true" [enableSearch]="true" name="phone" describedBy="phoneInput" formControlName="phone" />
   <mat-hint>e.g. {{phone.selectedCountry.placeHolder}}</mat-hint>
   <mat-error *ngIf="f.form.controls['phone']?.errors?.required">Required Field</mat-error>
   <mat-error *ngIf="f.form.controls['phone']?.errors?.validatePhoneNumber">Invalid Number</mat-error>
-</form>
+</mat-form-field>
 ```
-
-<!-- remember to ass [floatLabel]="'always'" for good looking label when form is not filled -->
 
 ## Inputs
 
@@ -103,47 +105,45 @@ If you want to show the sample number for the country selected or errors , use m
 
 ## Css variable
 
-| Name                                   | Default        | Explanation                                                                   |
-| -------------------------------------- | -------------- | ----------------------------------------------------------------------------- |
-| `--ngxMatInputTel-opacity`             | `0`            | If you wish both, the country flag and the placeholder to be shown by default |
-| `--ngxMatInputTel-selector-opacity`    | `0`            | If you wish the country flag to be shown by default                           |
-| `--ngxMatInputTel-placeholder-opacity` | `0`            | If you wish the placeholder flag to be shown by default                       |
-| `--ngxMatInputTel-flag-display`        | `inline-block` | If you wish to hide the country flag                                          |
+| Name                                  | Default        | Explanation                                                                   |
+| ------------------------------------- | -------------- | ----------------------------------------------------------------------------- |
+| `--mat-tel-input-opacity`             | `1`            | If you wish both, the country flag and the placeholder to be shown by default |
+| `--mat-tel-input-selector-opacity`    | `1`            | If you wish the country flag to be shown by default                           |
+| `--mat-tel-input-placeholder-opacity` | `1`            | If you wish the placeholder flag to be shown by default                       |
+| `--mat-tel-input-flag-display`        | `inline-block` | If you wish to hide the country flag                                          |
 
 ## Validator
 
 In case you had to manually remove the validator, the library exported it so you could add it back again.
 
-| Name                      | Description                                     | Example                                                |
-| ------------------------- | ----------------------------------------------- | ------------------------------------------------------ |
-| `ngxMatInputTelValidator` | The actual phone validator used for the control | `phoneControl.addValidators([ngxMatInputTlValidator])` |
+| Name                   | Description                                     | Example                                              |
+| ---------------------- | ----------------------------------------------- | ---------------------------------------------------- |
+| `matTelInputValidator` | The actual phone validator used for the control | `phoneControl.addValidators([matTelInputValidator])` |
 
 ## Library Contributions
 
 - Fork repo.
-- Go to `./projects/mat-tel-input`
+- Go to `./libs/mat-tel-input`
 - Update `./src/lib` with new functionality.
 - Update README.md
 - Pull request.
 
-### Helpful commands
+<!-- ### Helpful commands
 
 - Build lib: `$ npm run build_lib`
 - Copy license and readme files: `$ npm run copy-files`
 - Create package: `$ npm run npm_pack`
-- Build lib and create package: `$ npm run package`
+- Build lib and create package: `$ npm run package` -->
 
-### Use locally
+<!-- ### Use locally
 
 After building and creating package, you can use it locally too.
 
 In your project run:
 
-`$ npm install --save {{path to your local '*.tgz' package file}}`
+`$ npm install --save {{path to your local '*.tgz' package file}}` -->
 
 ## Authors and acknowledgment
 
-- maintainer [Raphaël Balet](https://github.com/rbalet)
+- maintainer [Munir I Said](https://github.com/Muneersahel)
 - Forked from [ngx-mat-intl-tel-input](https://github.com/tanansatpal/ngx-mat-intl-tel-input)
-
-[![BuyMeACoffee](https://www.buymeacoffee.com/assets/img/custom_images/purple_img.png)](https://www.buymeacoffee.com/widness)
