@@ -1,101 +1,149 @@
-# MatTelInput
+# International Telephone Input for Angular Material (ngxMatInputTel)
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+An Angular Material package for entering and validating international telephone numbers. It adds a flag dropdown to any input, detects the user's country, displays a relevant placeholder and provides formatting/validation methods.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+[![npm version](https://img.shields.io/npm/v/mat-tel-input.svg)](https://www.npmjs.com/package/mat-tel-input)
+![NPM](https://img.shields.io/npm/l/mat-tel-input)
+![npm bundle size](https://img.shields.io/bundlephobia/min/mat-tel-input)
+![npm](https://img.shields.io/npm/dm/mat-tel-input)
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+## Demo
 
-## Run tasks
+- https://stackblitz.com/~/github.com/rbalet/mat-tel-input
 
-To run the dev server for your app, use:
+## Caution
 
-```sh
-npx nx serve mat-tel-input-tester
+This is a fork from the [ngx-mat-intl-tel-input](https://github.com/tanansatpal/ngx-mat-intl-tel-input) library whish does not seems to be maintained anymore. _Last commit is over a year_
+
+**Supports:**
+
+- Angular v19
+- Angular Material v19
+- ReactiveFormsModule
+- FormsModule
+- Validation with [libphonenumber-js](https://github.com/catamphetamine/libphonenumber-js)
+
+## Installation
+
+### Install This Library
+
+`$ npm i mat-tel-input@latest`
+
+### Install Dependencies _Optional_
+
+`$ npm i libphonenumber-js@latest`
+
+## Usage
+
+### Import
+
+Add `NgxMatInputTelComponent` to your component file:
+
+```ts
+imports: [NgxMatInputTelComponent];
 ```
 
-To create a production bundle:
+## Example
 
-```sh
-npx nx build mat-tel-input-tester
+Refer to main app in this repository for working example.
+
+```html
+<form #f="ngForm" [formGroup]="phoneForm">
+  <mat-tel-input [preferredCountries]="['us', 'gb']" [enablePlaceholder]="true" [enableSearch]="true" name="phone" describedBy="phoneInput" formControlName="phone"></mat-tel-input>
+</form>
 ```
 
-To see all available targets to run for a project, run:
+```html
 
-```sh
-npx nx show project mat-tel-input-tester
+<form #f="ngForm" [formGroup]="phoneForm">
+  <mat-tel-input
+  [preferredCountries]="['us', 'gb']"
+  [enablePlaceholder]="true"
+  [enableSearch]="true"
+  name="phone"
+  autocomplete="tel"
+  (countryChanged)="yourComponentMethodToTreatyCountryChangedEvent($event)" // $event is a instance of current select Country
+  formControlName="phone"></mat-tel-input>
+</form>
+
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+If you want to show the sample number for the country selected or errors , use mat-hint anf mat-error as
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
-npx nx g @nx/angular:app demo
+```html
+<form #f="ngForm" [formGroup]="phoneForm">
+  <mat-tel-input [preferredCountries]="['us', 'gb']" [onlyCountries]="['us', 'gb', 'es']" [enablePlaceholder]="true" name="phone" autocomplete="tel" formControlName="phone" #phone></mat-tel-input>
+  <mat-hint>e.g. {{phone.selectedCountry.placeHolder}}</mat-hint>
+  <mat-error *ngIf="f.form.controls['phone']?.errors?.required">Required Field</mat-error>
+  <mat-error *ngIf="f.form.controls['phone']?.errors?.validatePhoneNumber">Invalid Number</mat-error>
+</form>
 ```
 
-To generate a new library, use:
+<!-- remember to ass [floatLabel]="'always'" for good looking label when form is not filled -->
 
-```sh
-npx nx g @nx/angular:lib mylib
-```
+## Inputs
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+| Options            | Type       | Default      | Description                                                                         |
+| ------------------ | ---------- | ------------ | ----------------------------------------------------------------------------------- |
+| enablePlaceholder  | `boolean`  | `false`      | Input placeholder text, which adapts to the country selected.                       |
+| enableSearch       | `boolean`  | `false`      | Whether to display a search bar to help filter down the list of countries           |
+| format             | `string`   | `default`    | Format of "as you type" input. Possible values: national, international, default    |
+| placeholder        | `string`   | `undefined`  | Placeholder for the input component.                                                |
+| maxLength          | `number`   | `15`         | max length of the input.                                                            |
+| onlyCountries      | `string[]` | `[]`         | List of manually selected country abbreviations, which will appear in the dropdown. |
+| preferredCountries | `string[]` | `[]`         | List of country abbreviations, which will appear at the top.                        |
+| resetOnChange      | `boolean`  | `false`      | Reset input on country change                                                       |
+| searchPlaceholder  | `string`   | `Search ...` | Placeholder for the search input                                                    |
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## Outputs
 
-## Set up CI!
+| Options        | Type                    | Default     | Description       |
+| -------------- | ----------------------- | ----------- | ----------------- |
+| countryChanged | `EventEmitter<Country>` | `undefined` | On country change |
 
-### Step 1
+## Css variable
 
-To connect to Nx Cloud, run the following command:
+| Name                                   | Default        | Explanation                                                                   |
+| -------------------------------------- | -------------- | ----------------------------------------------------------------------------- |
+| `--ngxMatInputTel-opacity`             | `0`            | If you wish both, the country flag and the placeholder to be shown by default |
+| `--ngxMatInputTel-selector-opacity`    | `0`            | If you wish the country flag to be shown by default                           |
+| `--ngxMatInputTel-placeholder-opacity` | `0`            | If you wish the placeholder flag to be shown by default                       |
+| `--ngxMatInputTel-flag-display`        | `inline-block` | If you wish to hide the country flag                                          |
 
-```sh
-npx nx connect
-```
+## Validator
 
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
+In case you had to manually remove the validator, the library exported it so you could add it back again.
 
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+| Name                      | Description                                     | Example                                                |
+| ------------------------- | ----------------------------------------------- | ------------------------------------------------------ |
+| `ngxMatInputTelValidator` | The actual phone validator used for the control | `phoneControl.addValidators([ngxMatInputTlValidator])` |
 
-### Step 2
+## Library Contributions
 
-Use the following command to configure a CI workflow for your workspace:
+- Fork repo.
+- Go to `./projects/mat-tel-input`
+- Update `./src/lib` with new functionality.
+- Update README.md
+- Pull request.
 
-```sh
-npx nx g ci-workflow
-```
+### Helpful commands
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- Build lib: `$ npm run build_lib`
+- Copy license and readme files: `$ npm run copy-files`
+- Create package: `$ npm run npm_pack`
+- Build lib and create package: `$ npm run package`
 
-## Install Nx Console
+### Use locally
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+After building and creating package, you can use it locally too.
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+In your project run:
 
-## Useful links
+`$ npm install --save {{path to your local '*.tgz' package file}}`
 
-Learn more:
+## Authors and acknowledgment
 
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- maintainer [Raphaël Balet](https://github.com/rbalet)
+- Forked from [ngx-mat-intl-tel-input](https://github.com/tanansatpal/ngx-mat-intl-tel-input)
 
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+[![BuyMeACoffee](https://www.buymeacoffee.com/assets/img/custom_images/purple_img.png)](https://www.buymeacoffee.com/widness)

@@ -1,2 +1,76 @@
-<app-nx-welcome></app-nx-welcome>
-<router-outlet></router-outlet>
+<div class="flex flex-col justify-center items-center">
+  <div class="flex flex-col items-center">
+    <img
+      class="h-24 w-24"
+      alt="Angular Logo"
+      src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg=="
+    />
+    <h1>Welcome to {{ title }}!</h1>
+  </div>
+
+  <h2>Form sample</h2>
+  <form [formGroup]="form1">
+    <mat-form-field class="w-full" appearance="outline" [floatLabel]="'always'">
+      <mat-label>Phone</mat-label>
+      <!-- [cssClass]="'custom'" -->
+      <mat-tel-input
+        [preferredCountries]="['us', 'ca']"
+        enablePlaceholder
+        enableSearch
+        [formControl]="form1.controls.phone"
+        describedBy="phoneInput"
+        required
+        #phone
+        maxLength="20"
+      ></mat-tel-input>
+      <mat-error>Invalid phone</mat-error>
+    </mat-form-field>
+  </form>
+
+  <div class="flex mb-4 gap-4">
+    <div>
+      <div>
+        <strong>Is input valid:</strong>
+        <pre>{{ !form1.controls['phone'].invalid }}</pre>
+      </div>
+      <div>
+        <strong>Is input touched:</strong>
+        <pre>{{ form1.controls['phone'].touched }}</pre>
+      </div>
+      <div>
+        <strong>Is form valid:</strong>
+        <pre>{{ form1.valid }}</pre>
+      </div>
+      <div>
+        <strong>Form value:</strong>
+        <pre>{{ form1.value | json }}</pre>
+      </div>
+      <div>
+        <strong>Form validation errors:</strong>
+        <pre>{{ form1.controls['phone'].errors | json }}</pre>
+      </div>
+    </div>
+  </div>
+
+  <h2>ngModel</h2>
+  <mat-form-field [floatLabel]="'always'">
+    <mat-label>Phone number</mat-label>
+    <mat-tel-input
+      [(ngModel)]="phone"
+      [disabled]="phoneDisabled"
+    ></mat-tel-input>
+  </mat-form-field>
+
+  <div class="flex gap-4">
+    <div>
+      <div>
+        <strong>phone:</strong>
+        <pre>{{ phone }}</pre>
+      </div>
+      <div>
+        <strong>name:</strong>
+        <pre>{{ name }}</pre>
+      </div>
+    </div>
+  </div>
+</div>
