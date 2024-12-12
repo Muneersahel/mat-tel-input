@@ -2,7 +2,7 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { parsePhoneNumber, PhoneNumber } from 'libphonenumber-js';
 
 export const matTelInputValidator = (
-  control: AbstractControl
+  control: AbstractControl,
 ): ValidationErrors | null => {
   const error = { validatePhoneNumber: true };
   let numberInstance: PhoneNumber;

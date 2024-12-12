@@ -29,10 +29,7 @@ import {
 } from '@angular/forms';
 import { ErrorStateMatcher, MatRippleModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
-import {
-  MAT_FORM_FIELD_DEFAULT_OPTIONS,
-  MatFormFieldControl,
-} from '@angular/material/form-field';
+import { MatFormFieldControl } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenu, MatMenuModule } from '@angular/material/menu';
 import {
@@ -57,7 +54,7 @@ class matTelInputBase {
     public _defaultErrorStateMatcher: ErrorStateMatcher,
     public _parentForm: NgForm,
     public _parentFormGroup: FormGroupDirective,
-    public ngControl: NgControl
+    public ngControl: NgControl,
   ) {}
 }
 
@@ -68,10 +65,6 @@ class matTelInputBase {
   providers: [
     CountryCode,
     { provide: MatFormFieldControl, useExisting: MatTelInput },
-    {
-      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
-      useValue: { floatLabel: 'always' },
-    },
     {
       provide: NG_VALIDATORS,
       useValue: matTelInputValidator,
@@ -119,7 +112,7 @@ export class MatTelInput
   @Input() name?: string;
   @Input() onlyCountries: string[] = [];
   @Input() preferredCountries: string[] = [];
-  @Input() searchPlaceholder = 'Search ...';
+  @Input() searchPlaceholder = 'Search country or code';
   @Input({ transform: booleanAttribute }) enablePlaceholder = false;
   @Input({ transform: booleanAttribute }) enableSearch = false;
   @Input({ transform: booleanAttribute }) resetOnChange = false;
@@ -187,7 +180,7 @@ export class MatTelInput
     @Optional() @Self() _ngControl: NgControl,
     @Optional() _parentForm: NgForm,
     @Optional() _parentFormGroup: FormGroupDirective,
-    _defaultErrorStateMatcher: ErrorStateMatcher
+    _defaultErrorStateMatcher: ErrorStateMatcher,
   ) {
     super(_defaultErrorStateMatcher, _parentForm, _parentFormGroup, _ngControl);
 
@@ -222,7 +215,7 @@ export class MatTelInput
 
     if (this.onlyCountries.length) {
       this.allCountries = this.allCountries.filter((c) =>
-        this.onlyCountries.includes(c.iso2)
+        this.onlyCountries.includes(c.iso2),
       );
     }
 
@@ -241,7 +234,7 @@ export class MatTelInput
     ) {
       const currentState = this.errorStateMatcher.isErrorState(
         this.ngControl.control as FormControl,
-        this.ngControl?.value
+        this.ngControl?.value,
       );
       if (currentState !== this.errorState) {
         this.errorState = currentState;
@@ -268,7 +261,7 @@ export class MatTelInput
       const oldState = this.errorState;
       const newState = this.errorStateMatcher.isErrorState(
         this.ngControl.control,
-        this._parentForm
+        this._parentForm,
       );
 
       this.errorState =
@@ -309,7 +302,7 @@ export class MatTelInput
 
     this.numberInstance = parsePhoneNumberFromString(
       this.phoneNumber.toString(),
-      this.selectedCountry.iso2.toUpperCase() as CC
+      this.selectedCountry.iso2.toUpperCase() as CC,
     );
 
     this.formatAsYouTypeIfEnabled();
@@ -379,7 +372,7 @@ export class MatTelInput
 
       if (this.enablePlaceholder) {
         country.placeHolder = this._getPhoneNumberPlaceHolder(
-          country.iso2.toUpperCase()
+          country.iso2.toUpperCase(),
         );
       }
 
@@ -489,7 +482,7 @@ export class MatTelInput
       return;
     }
     const asYouType: AsYouType = new AsYouType(
-      this.selectedCountry.iso2.toUpperCase() as CC
+      this.selectedCountry.iso2.toUpperCase() as CC,
     );
     // To avoid caret positioning we apply formatting only if the caret is at the end:
     if (!this.phoneNumber) return;
