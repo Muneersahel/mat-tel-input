@@ -62,5 +62,10 @@
     "@nx/angular:component": {
       "style": "css"
     }
+  },
+  "release": {
+    "version": {
+      "preVersionCommand": "npm run copy-files"
+    }
   }
 }
