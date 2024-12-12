@@ -1,6 +1,6 @@
 ## 19.0.2 (2024-12-12)
 
-This was a version bump only, there were no code changes.
+Add License and README.md files to the package.
 
 ## 19.0.2-0 (2024-12-12)
 
