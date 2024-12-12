@@ -3,5 +3,9 @@
   "dest": "../../dist/libs/mat-tel-input",
   "lib": {
     "entryFile": "src/index.ts"
-  }
+  },
+  "assets": [
+    { "glob": "README.md", "input": ".", "output": "." },
+    { "glob": "LICENSE", "input": ".", "output": "." }
+  ]
 }
