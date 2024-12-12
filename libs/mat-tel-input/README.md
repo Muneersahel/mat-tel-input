@@ -7,10 +7,6 @@ An Angular Material package for entering and validating international telephone 
 ![npm bundle size](https://img.shields.io/bundlephobia/min/mat-tel-input)
 ![npm](https://img.shields.io/npm/dm/mat-tel-input)
 
-## Demo
-
-- https://stackblitz.com/~/github.com/rbalet/mat-tel-input
-
 ## Caution
 
 This is a fork from the [ngx-mat-intl-tel-input](https://github.com/tanansatpal/ngx-mat-intl-tel-input) library whish does not seems to be maintained anymore. _Last commit is over a year_
@@ -128,12 +124,10 @@ In case you had to manually remove the validator, the library exported it so you
 - Update README.md
 - Pull request.
 
-<!-- ### Helpful commands
+### Helpful commands
 
-- Build lib: `$ npm run build_lib`
 - Copy license and readme files: `$ npm run copy-files`
-- Create package: `$ npm run npm_pack`
-- Build lib and create package: `$ npm run package` -->
+- Publish package: `$ npm run publish`
 
 <!-- ### Use locally
 
