@@ -1,3 +1,13 @@
+## 19.0.6 (2024-12-13)
+
+### 🚀 Features
+
+- enhance project configuration for mat-tel-input and mat-tel-input-tester, adding release commands and improving build settings ([418c18d](https://github.com/Muneersahel/mat-tel-input/commit/418c18d))
+
+### ❤️ Thank You
+
+- Muneersahel @Muneersahel
+
 ## 19.0.5 (2024-12-13)
 
 ### 🚀 Features
