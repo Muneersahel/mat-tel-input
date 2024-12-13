@@ -4,7 +4,9 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "copy-files": "cp README.md libs/mat-tel-input && cp LICENSE libs/mat-tel-input"
+    "copy-files": "cp README.md libs/mat-tel-input && cp LICENSE libs/mat-tel-input",
+    "build-many": "nx run-many -t build",
+    "publish": "yarn build-many && npx nx release publish"
   },
   "dependencies": {
     "@angular/animations": "~19.0.0",

@@ -31,6 +31,25 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint"
+    },
+    "nx-release-publish": {
+      "dependsOn": ["build"],
+      "options": {
+        "packageRoot": "dist/libs/mat-tel-input"
+      }
+    }
+  },
+  "release": {
+    "version": {
+      "preVersionCommand": "npm run copy-files && npx nx build mat-tel-input",
+      "generatorOptions": {
+        "packageRoot": "dist/libs/mat-tel-input"
+      }
+    },
+    "changelog": {
+      "workspaceChangelog": {
+        "createRelease": "github"
+      }
     }
   }
 }
