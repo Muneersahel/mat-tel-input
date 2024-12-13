@@ -1,3 +1,15 @@
+## 19.0.5-0 (2024-12-13)
+
+### 🩹 Fixes
+
+- remove unnecessary dependency on build for nx-release-publish in mat-tel-input project configuration ([904d412](https://github.com/Muneersahel/mat-tel-input/commit/904d412))
+- simplify release configuration by removing unnecessary generatorOptions in mat-tel-input project ([ed483a9](https://github.com/Muneersahel/mat-tel-input/commit/ed483a9))
+- update nx-release-publish configuration to depend on build and simplify preVersionCommand ([5a46541](https://github.com/Muneersahel/mat-tel-input/commit/5a46541))
+
+### ❤️ Thank You
+
+- Muneersahel @Muneersahel
+
 ## 19.0.5 (2024-12-13)
 
 ### 🚀 Features
