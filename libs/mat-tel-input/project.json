@@ -40,10 +40,7 @@
   },
   "release": {
     "version": {
-      "preVersionCommand": "npm run copy-files && npx nx build mat-tel-input",
-      "generatorOptions": {
-        "packageRoot": "dist/libs/mat-tel-input"
-      }
+      "preVersionCommand": "npm run copy-files && npx nx build mat-tel-input"
     },
     "changelog": {
       "workspaceChangelog": {
