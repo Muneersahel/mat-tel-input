@@ -33,7 +33,6 @@
       "executor": "@nx/eslint:lint"
     },
     "nx-release-publish": {
-      "dependsOn": ["build"],
       "options": {
         "packageRoot": "dist/libs/mat-tel-input"
       }
