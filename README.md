@@ -139,5 +139,5 @@ In your project run:
 
 ## Authors and acknowledgment
 
-- maintainer [Munir I Said](https://github.com/Muneersahel)
+- Maintainer [Munir I Said](https://github.com/Muneersahel)
 - Forked from [ngx-mat-input-tel](https://github.com/rbalet/ngx-mat-input-tel)
