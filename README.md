@@ -9,7 +9,7 @@ An Angular Material package for entering and validating international telephone 
 
 ## Caution
 
-This is a fork from the [ngx-mat-intl-tel-input](https://github.com/tanansatpal/ngx-mat-intl-tel-input) library whish does not seems to be maintained anymore. _Last commit is over a year_
+This is a form from [ngx-mat-input-tel](https://github.com/rbalet/ngx-mat-input-tel) which is a fork from the [ngx-mat-intl-tel-input](https://github.com/tanansatpal/ngx-mat-intl-tel-input) library whish does not seems to be maintained anymore. _Last commit is over a year_
 
 **Supports:**
 
@@ -140,4 +140,4 @@ In your project run:
 ## Authors and acknowledgment
 
 - maintainer [Munir I Said](https://github.com/Muneersahel)
-- Forked from [ngx-mat-intl-tel-input](https://github.com/tanansatpal/ngx-mat-intl-tel-input)
+- Forked from [ngx-mat-input-tel](https://github.com/rbalet/ngx-mat-input-tel)
