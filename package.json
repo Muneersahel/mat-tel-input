@@ -6,7 +6,7 @@
   "scripts": {
     "copy-files": "cp README.md libs/mat-tel-input && cp LICENSE libs/mat-tel-input",
     "build-many": "nx run-many -t build",
-    "publish": "yarn build-many && npx nx release publish"
+    "publish": "yarn copy-files && yarn build-many && npx nx release publish"
   },
   "dependencies": {
     "@angular/animations": "21.1.6",
@@ -19,7 +19,7 @@
     "@angular/platform-browser": "21.1.6",
     "@angular/platform-browser-dynamic": "21.1.6",
     "@angular/router": "21.1.6",
-    "libphonenumber-js": "^1.11.16",
+    "libphonenumber-js": "^1.12.40",
     "rxjs": "~7.8.0",
     "zone.js": "0.16.1"
   },
