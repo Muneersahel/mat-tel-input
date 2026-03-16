@@ -21,3 +21,13 @@
 - The `nx-generate` skill handles generator discovery internally - don't call nx_docs just to look up generator syntax
 
 <!-- nx configuration end-->
+
+## Token Efficiency
+
+- Avoid re-reading files you just edited unless the outcome is uncertain.
+- Avoid re-running commands that already succeeded unless new context requires it.
+- Do not paste large generated content back into the chat unless explicitly requested.
+- Batch related edits into as few tool calls as practical.
+- Skip filler confirmations and continue directly to the next useful step.
+- Prefer one well-planned tool call over multiple fragmented calls.
+- Avoid repeating summaries of actions that are already clear.
