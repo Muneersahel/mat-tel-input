@@ -4,6 +4,16 @@
   "sourceRoot": "libs/mat-tel-input/src",
   "prefix": "",
   "projectType": "library",
+  "release": {
+    "version": {
+      "preVersionCommand": "npm run copy-files"
+    },
+    "changelog": {
+      "workspaceChangelog": {
+        "createRelease": "github"
+      }
+    }
+  },
   "tags": [],
   "targets": {
     "build": {
@@ -36,16 +46,6 @@
       "dependsOn": ["build"],
       "options": {
         "packageRoot": "dist/libs/mat-tel-input"
-      }
-    }
-  },
-  "release": {
-    "version": {
-      "preVersionCommand": "npm run copy-files"
-    },
-    "changelog": {
-      "workspaceChangelog": {
-        "createRelease": "github"
       }
     }
   }
