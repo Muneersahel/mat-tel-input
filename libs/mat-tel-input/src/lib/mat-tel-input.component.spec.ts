@@ -1,17 +1,255 @@
+import { Component, ViewChild } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { By } from '@angular/platform-browser';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatFormFieldModule } from '@angular/material/form-field';
+
+import { Country } from './country.model';
+import { PhoneNumberFormat } from './mat-tel-format.model';
 import { MatTelInput } from './mat-tel-input.component';
+
+@Component({
+  standalone: true,
+  imports: [MatTelInput],
+  template: `
+    <mat-tel-input
+      [preferredCountries]="preferredCountries"
+      [onlyCountries]="onlyCountries"
+    />
+  `,
+})
+class StandaloneHostComponent {
+  preferredCountries: string[] = [];
+  onlyCountries: string[] = [];
+
+  @ViewChild(MatTelInput) matTelInput!: MatTelInput;
+}
+
+@Component({
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatTelInput],
+  template: `
+    <form [formGroup]="form">
+      <mat-form-field>
+        <mat-label>Phone</mat-label>
+        <mat-tel-input
+          formControlName="phone"
+          [preferredCountries]="preferredCountries"
+          [format]="format"
+          [resetOnChange]="resetOnChange"
+          [enablePlaceholder]="enablePlaceholder"
+          (countryChanged)="selectedCountry = $event"
+        />
+      </mat-form-field>
+    </form>
+  `,
+})
+class ReactiveHostComponent {
+  form = new FormGroup({
+    phone: new FormControl<string | null>(null, {
+      validators: [Validators.required],
+    }),
+  });
+  preferredCountries: string[] = ['us'];
+  format: PhoneNumberFormat = 'default';
+  resetOnChange = false;
+  enablePlaceholder = false;
+  selectedCountry?: Country;
+
+  @ViewChild(MatTelInput) matTelInput!: MatTelInput;
+}
+
+@Component({
+  standalone: true,
+  imports: [FormsModule, MatFormFieldModule, MatTelInput],
+  template: `
+    <mat-form-field>
+      <mat-label>Phone</mat-label>
+      <mat-tel-input
+        [(ngModel)]="phone"
+        name="phone"
+        [preferredCountries]="preferredCountries"
+      />
+    </mat-form-field>
+  `,
+})
+class NgModelHostComponent {
+  phone = '+5511912347894';
+  preferredCountries = ['us'];
+
+  @ViewChild(MatTelInput) matTelInput!: MatTelInput;
+}
+
 describe('MatTelInput', () => {
-  let component: MatTelInput;
-  let fixture: ComponentFixture<MatTelInput>;
+  async function stabilize<T>(fixture: ComponentFixture<T>) {
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+  }
+
+  function getMatTelInput<T>(fixture: ComponentFixture<T>): MatTelInput {
+    return fixture.debugElement.query(By.directive(MatTelInput)).componentInstance;
+  }
+
+  function getPhoneInput<T>(fixture: ComponentFixture<T>): HTMLInputElement {
+    return fixture.nativeElement.querySelector(
+      '.mat-tel-input-input',
+    ) as HTMLInputElement;
+  }
+
+  function getCountryButton<T>(fixture: ComponentFixture<T>): HTMLButtonElement {
+    return fixture.nativeElement.querySelector(
+      '.country-selector',
+    ) as HTMLButtonElement;
+  }
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MatTelInput],
+      imports: [
+        NoopAnimationsModule,
+        StandaloneHostComponent,
+        ReactiveHostComponent,
+        NgModelHostComponent,
+      ],
     }).compileComponents();
-    fixture = TestBed.createComponent(MatTelInput);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
-  it('should create', () => {
-    expect(component).toBeTruthy();
+
+  it('should create and always float the label', async () => {
+    const fixture = TestBed.createComponent(StandaloneHostComponent);
+
+    await stabilize(fixture);
+
+    expect(fixture.componentInstance.matTelInput).toBeTruthy();
+    expect(fixture.componentInstance.matTelInput.shouldLabelFloat).toBe(true);
+  });
+
+  it('should use preferred countries and honor onlyCountries filtering', async () => {
+    const fixture = TestBed.createComponent(StandaloneHostComponent);
+    fixture.componentInstance.preferredCountries = ['tz', 'us'];
+    fixture.componentInstance.onlyCountries = ['tz', 'us'];
+
+    await stabilize(fixture);
+
+    const component = fixture.componentInstance.matTelInput;
+
+    expect(component.selectedCountry.iso2).toBe('tz');
+    expect(component.preferredCountriesInDropDown.map((country) => country.iso2)).toEqual([
+      'tz',
+      'us',
+    ]);
+    expect(component.allCountries.every((country) => ['tz', 'us'].includes(country.iso2))).toBe(
+      true,
+    );
+  });
+
+  it('should propagate a valid national number to the reactive form as E.164', async () => {
+    const fixture = TestBed.createComponent(ReactiveHostComponent);
+
+    await stabilize(fixture);
+
+    const host = fixture.componentInstance;
+    host.matTelInput.phoneNumber = '6502530000' as any;
+    host.matTelInput.onPhoneNumberChange();
+    await stabilize(fixture);
+
+    expect(host.form.controls.phone.value).toBe('+16502530000');
+    expect(host.matTelInput.selectedCountry.iso2).toBe('us');
+    expect(host.selectedCountry?.iso2).toBe('us');
+  });
+
+  it('should format the visible value while keeping the control value normalized', async () => {
+    const fixture = TestBed.createComponent(ReactiveHostComponent);
+    fixture.componentInstance.format = 'international';
+
+    await stabilize(fixture);
+
+    const host = fixture.componentInstance;
+    host.matTelInput.phoneNumber = '6502530000' as any;
+    host.matTelInput.onPhoneNumberChange();
+    await stabilize(fixture);
+
+    expect(host.form.controls.phone.value).toBe('+16502530000');
+    expect(host.matTelInput.phoneNumber).toBe('+1 650 253 0000');
+  });
+
+  it('should surface invalid phone numbers through the form control validator', async () => {
+    const fixture = TestBed.createComponent(ReactiveHostComponent);
+
+    await stabilize(fixture);
+
+    const host = fixture.componentInstance;
+    host.matTelInput.phoneNumber = '123' as any;
+    host.matTelInput.onPhoneNumberChange();
+    await stabilize(fixture);
+
+    expect(host.form.controls.phone.invalid).toBe(true);
+    expect(host.form.controls.phone.errors).toEqual({
+      validatePhoneNumber: true,
+    });
+    expect(host.form.controls.phone.touched).toBe(true);
+  });
+
+  it('should reset the current value when the country changes and resetOnChange is enabled', async () => {
+    const fixture = TestBed.createComponent(ReactiveHostComponent);
+    fixture.componentInstance.resetOnChange = true;
+
+    await stabilize(fixture);
+
+    const host = fixture.componentInstance;
+    host.form.controls.phone.setValue('+16502530000');
+    await stabilize(fixture);
+
+    const tanzania = host.matTelInput.allCountries.find(
+      (country) => country.iso2 === 'tz',
+    ) as Country;
+
+    host.matTelInput.onCountrySelect(tanzania, getPhoneInput(fixture));
+    await stabilize(fixture);
+
+    expect(host.form.controls.phone.value).toBeNull();
+    expect(host.matTelInput.phoneNumber).toBe('');
+    expect(host.matTelInput.selectedCountry.iso2).toBe('tz');
+  });
+
+  it('should reflect the disabled state from the reactive form control', async () => {
+    const fixture = TestBed.createComponent(ReactiveHostComponent);
+
+    await stabilize(fixture);
+
+    fixture.componentInstance.form.controls.phone.disable();
+    await stabilize(fixture);
+
+    expect(getCountryButton(fixture).disabled).toBe(true);
+    expect(getPhoneInput(fixture).disabled).toBe(true);
+  });
+
+  it('should show the selected country placeholder when placeholders are enabled', async () => {
+    const fixture = TestBed.createComponent(ReactiveHostComponent);
+    fixture.componentInstance.enablePlaceholder = true;
+
+    await stabilize(fixture);
+
+    expect(getPhoneInput(fixture).placeholder).not.toBe('');
+  });
+
+  it('should support ngModel with an existing international value', async () => {
+    const fixture = TestBed.createComponent(NgModelHostComponent);
+
+    await stabilize(fixture);
+
+    const component = getMatTelInput(fixture);
+
+    expect(component.selectedCountry.iso2).toBe('br');
+    expect(component.phoneNumber).toBe('11912347894');
+    expect(component.preferredCountriesInDropDown.map((country) => country.iso2)).toContain(
+      'br',
+    );
   });
 });
