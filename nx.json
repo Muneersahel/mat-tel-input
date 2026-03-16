@@ -114,5 +114,8 @@
     "@schematics/angular:resolver": {
       "typeSeparator": "."
     }
+  },
+  "release": {
+    "projects": ["libs/*"]
   }
 }
