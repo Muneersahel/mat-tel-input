@@ -1,0 +1,60 @@
+.section-title {
+  @apply text-2xl font-semibold mb-2;
+}
+
+.section-desc {
+  @apply text-gray-600 mb-6;
+}
+
+/* Code blocks */
+.code-block {
+  @apply bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto text-sm leading-relaxed;
+  font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Inline code */
+.code-inline {
+  @apply bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded text-sm;
+  font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+/* State / debug panels */
+.state-panel {
+  @apply text-sm text-gray-500 p-3 bg-gray-50 rounded;
+  font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Section anchor offset for sticky nav */
+section[id] {
+  scroll-margin-top: 56px;
+}
+
+/* API tables */
+.api-table {
+  @apply w-full text-sm text-left border border-gray-200 rounded;
+}
+
+.api-table thead {
+  @apply bg-gray-50;
+}
+
+.api-table th {
+  @apply px-4 py-2 font-medium;
+}
+
+.api-table td {
+  @apply px-4 py-2;
+}
+
+.api-table tbody tr {
+  @apply border-t border-gray-200;
+}
+
+.api-table tbody tr:hover {
+  @apply bg-gray-50;
+}
+
+/* Slide toggles stacked */
+mat-slide-toggle {
+  display: block;
+}
