@@ -100,7 +100,7 @@ export class MatTelInput
   id = `mat-tel-input-${MatTelInput.nextId++}`;
   @HostBinding('class.floating')
   get shouldLabelFloat(): boolean {
-    return this.focused || !this.empty;
+    return true;
   }
 
   @Input() autocomplete: 'off' | 'tel' = 'off';

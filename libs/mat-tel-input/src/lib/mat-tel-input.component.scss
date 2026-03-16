@@ -1,7 +1,18 @@
-::ng-deep .mat-mdc-menu-content {
-  max-height: 400px;
-  overflow: scroll;
-  padding-top: 0 !important;
+// TODO: ::ng-deep is deprecated but no replacement exists for styling CDK overlay content.
+// These styles are scoped to .mat-tel-input-overlay-panel to minimize global bleed.
+// See: https://github.com/angular/angular/issues/17867
+::ng-deep .mat-tel-input-overlay-panel {
+  .mat-mdc-menu-content {
+    max-height: var(--mat-tel-input-dropdown-max-height, 400px);
+    overflow: auto;
+    padding-top: 0 !important;
+  }
+
+  .mat-mdc-menu-item-text {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
 }
 
 .country-search {
@@ -14,12 +25,19 @@
   border-right: none;
   border-left: none;
   border-image: initial;
-  border-bottom: 1px solid rgb(221, 221, 221);
+  border-bottom: 1px solid
+    var(--mat-tel-input-search-border-color, rgba(0, 0, 0, 0.12));
   font-size: 14px;
   padding: 20px 10px 24px;
   box-sizing: border-box;
-  background: #fff;
+  background: var(--mat-tel-input-search-bg, var(--mat-sys-surface, #fff));
+  color: var(--mat-tel-input-search-color, var(--mat-sys-on-surface, inherit));
   margin: 0;
+  outline: none;
+
+  &::placeholder {
+    color: var(--mat-tel-input-search-placeholder-color, rgba(0, 0, 0, 0.6));
+  }
 }
 
 :host {
@@ -35,7 +53,7 @@ input.mat-tel-input-input::placeholder {
 
 .mat-tel-input-container {
   display: flex;
-  height: var(--mat-tel-input-height, 24px);
+  align-items: center;
 }
 
 input {
@@ -59,6 +77,7 @@ input {
     }
   }
 }
+
 .icon-wrapper {
   padding-right: 16px;
 }
@@ -68,9 +87,10 @@ input {
     image: url(./assets/flags_sprite_2x.png);
     size: 100% auto;
   }
-  filter: drop-shadow(1px 1px 1px rgba(#000, 0.54));
-  height: 14px;
-  width: 24px;
+  filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.54));
+  height: var(--mat-tel-input-flag-height, 14px);
+  width: var(--mat-tel-input-flag-width, 24px);
+  border-radius: var(--mat-tel-input-flag-border-radius, 0);
 }
 
 .mdc-button__label {
@@ -89,6 +109,7 @@ input {
   height: initial;
   line-height: unset;
   padding: 1px;
+  padding-right: 4px;
   opacity: var(
     --mat-tel-input-selector-opacity,
     var(--mat-tel-input-opacity, 1)
@@ -100,21 +121,32 @@ input {
     size: inherit;
     weight: inherit;
   }
-  background: {
-    image: url('./assets/arrow_drop_down_grey600_18dp.png');
-    position: right center;
-    repeat: no-repeat;
-    size: 18px auto;
+  cursor: pointer;
+
+  &::after {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--mat-tel-input-arrow-color, currentColor);
+    margin-left: 4px;
   }
 
   &:disabled {
-    color: rgba(#000, 0.38);
+    color: var(--mat-tel-input-disabled-color, rgba(0, 0, 0, 0.38));
+    cursor: default;
   }
 }
 
 .country-selector-code {
-  color: var(--mat-form-field-outlined-input-text-color);
-  padding-right: 18px;
+  color: var(
+    --mat-tel-input-dial-code-color,
+    var(--mat-sys-on-surface, inherit)
+  );
+  font-size: var(--mat-tel-input-dial-code-font-size, inherit);
+  padding-right: 4px;
 }
 
 .country-selector-flag {
@@ -123,7 +155,10 @@ input {
 }
 
 .country-list-button {
-  color: rgba(#000, 0.87);
+  color: var(
+    --mat-tel-input-country-text-color,
+    var(--mat-sys-on-surface, rgba(0, 0, 0, 0.87))
+  );
   direction: ltr;
   font-size: 16px;
   font-weight: 400;
@@ -134,13 +169,6 @@ input {
   text-align: left;
   text-transform: none;
   width: 100%;
-}
-
-::ng-deep .mat-mdc-menu-item-text {
-  display: flex;
-  align-items: center;
-  // justify-content: space-between;
-  white-space: nowrap;
 }
 
 $country-flags: (
