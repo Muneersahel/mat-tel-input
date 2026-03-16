@@ -7,14 +7,10 @@ An Angular Material package for entering and validating international telephone 
 ![npm bundle size](https://img.shields.io/bundlephobia/min/mat-tel-input)
 ![npm](https://img.shields.io/npm/dm/mat-tel-input)
 
-## Caution
-
-This is a fork from [ngx-mat-input-tel](https://github.com/rbalet/ngx-mat-input-tel) which is a fork from the [ngx-mat-intl-tel-input](https://github.com/tanansatpal/ngx-mat-intl-tel-input) library whish does not seems to be maintained anymore. _Last commit is over a year_
-
 **Supports:**
 
-- Angular v19
-- Angular Material v19
+- Angular v21
+- Angular Material v21
 - ReactiveFormsModule
 - FormsModule
 - Validation with [libphonenumber-js](https://github.com/catamphetamine/libphonenumber-js)
@@ -23,98 +19,164 @@ This is a fork from [ngx-mat-input-tel](https://github.com/rbalet/ngx-mat-input-
 
 ### Install This Library
 
-`$ npm i mat-tel-input@latest`
+```sh
+npm i mat-tel-input@latest
+```
 
-### Install Dependencies _Optional_
+### Install Dependencies _(Optional)_
 
-`$ npm i libphonenumber-js@latest`
+```sh
+npm i libphonenumber-js@latest
+```
 
 ## Usage
 
 ### Import
 
-Add `MatTelInput` to your component file:
+Add `MatTelInput` to your component's `imports`:
 
 ```ts
-imports: [MatTelInput];
+import { MatTelInput } from 'mat-tel-input';
+
+@Component({
+  imports: [MatTelInput],
+  // ...
+})
+export class MyComponent {}
 ```
 
-## Example
+## Examples
 
-Refer to main app in this repository for working example.
+### Reactive Forms
 
 ```html
-<mat-form-field [floatLabel]="'always'">
+<mat-form-field appearance="outline">
   <mat-label>Phone</mat-label>
-  <mat-tel-input [preferredCountries]="['us', 'tz']" [enablePlaceholder]="true" [enableSearch]="true" name="phone" describedBy="phoneInput" formControlName="phone" />
+  <mat-tel-input [preferredCountries]="['us', 'tz']" enablePlaceholder enableSearch formControlName="phone"></mat-tel-input>
+  <mat-error>Invalid phone</mat-error>
 </mat-form-field>
 ```
 
-```html
-
-<mat-form-field [floatLabel]="'always'">
-  <mat-label>Phone</mat-label>
-  <mat-tel-input
-    [preferredCountries]="['us', 'gb']"
-    [enablePlaceholder]="true"
-    [enableSearch]="true"
-    name="phone"
-    autocomplete="tel"
-    (countryChanged)="yourComponentMethodToTreatyCountryChangedEvent($event)" // $event is a instance of current select Country
-    formControlName="phone"
-  />
-</mat-form-field>
-
-```
-
-If you want to show the sample number for the country selected or errors , use mat-hint anf mat-error as
+### Template-driven Forms
 
 ```html
-<mat-form-field [floatLabel]="'always'">
+<mat-form-field appearance="fill">
   <mat-label>Phone</mat-label>
-  <mat-tel-input [preferredCountries]="['us', 'tz']" [enablePlaceholder]="true" [enableSearch]="true" name="phone" describedBy="phoneInput" formControlName="phone" />
-  <mat-hint>e.g. {{phone.selectedCountry.placeHolder}}</mat-hint>
-  <mat-error *ngIf="f.form.controls['phone']?.errors?.required">Required Field</mat-error>
-  <mat-error *ngIf="f.form.controls['phone']?.errors?.validatePhoneNumber">Invalid Number</mat-error>
+  <mat-tel-input [(ngModel)]="phone" [preferredCountries]="['us', 'gb']" enablePlaceholder enableSearch autocomplete="tel" (countryChanged)="onCountryChanged($event)"></mat-tel-input>
 </mat-form-field>
 ```
+
+### Hints and Errors
+
+```html
+<mat-form-field>
+  <mat-label>Phone</mat-label>
+  <mat-tel-input [preferredCountries]="['us', 'tz']" enablePlaceholder enableSearch formControlName="phone"></mat-tel-input>
+  <mat-hint>e.g. {{ phone.selectedCountry.placeHolder }}</mat-hint>
+  @if (f.form.controls['phone']?.errors?.required) {
+  <mat-error>Required Field</mat-error>
+  } @if (f.form.controls['phone']?.errors?.validatePhoneNumber) {
+  <mat-error>Invalid Number</mat-error>
+  }
+</mat-form-field>
+```
+
+> The label floats automatically — no need to set `[floatLabel]="'always'"`.
 
 ## Inputs
 
-| Options            | Type       | Default      | Description                                                                         |
-| ------------------ | ---------- | ------------ | ----------------------------------------------------------------------------------- |
-| enablePlaceholder  | `boolean`  | `false`      | Input placeholder text, which adapts to the country selected.                       |
-| enableSearch       | `boolean`  | `false`      | Whether to display a search bar to help filter down the list of countries           |
-| format             | `string`   | `default`    | Format of "as you type" input. Possible values: national, international, default    |
-| placeholder        | `string`   | `undefined`  | Placeholder for the input component.                                                |
-| maxLength          | `number`   | `15`         | max length of the input.                                                            |
-| onlyCountries      | `string[]` | `[]`         | List of manually selected country abbreviations, which will appear in the dropdown. |
-| preferredCountries | `string[]` | `[]`         | List of country abbreviations, which will appear at the top.                        |
-| resetOnChange      | `boolean`  | `false`      | Reset input on country change                                                       |
-| searchPlaceholder  | `string`   | `Search ...` | Placeholder for the search input                                                    |
+| Option               | Type                | Default                    | Description                                                                  |
+| -------------------- | ------------------- | -------------------------- | ---------------------------------------------------------------------------- |
+| `enablePlaceholder`  | `boolean`           | `false`                    | Show an example phone number as placeholder, adapts to selected country.     |
+| `enableSearch`       | `boolean`           | `false`                    | Show a search bar in the country dropdown.                                   |
+| `format`             | `PhoneNumberFormat` | `'default'`                | Format of "as you type" input: `'default'`, `'national'`, `'international'`. |
+| `placeholder`        | `string`            | `''`                       | Custom placeholder for the input.                                            |
+| `maxLength`          | `string \| number`  | `15`                       | Max length of the phone input.                                               |
+| `onlyCountries`      | `string[]`          | `[]`                       | Restrict the dropdown to these country ISO-2 codes.                          |
+| `preferredCountries` | `string[]`          | `[]`                       | Country ISO-2 codes to show at the top of the dropdown.                      |
+| `resetOnChange`      | `boolean`           | `false`                    | Reset phone input when the selected country changes.                         |
+| `searchPlaceholder`  | `string`            | `'Search country or code'` | Placeholder text for the country search input.                               |
+| `autocomplete`       | `'off' \| 'tel'`    | `'off'`                    | HTML autocomplete attribute on the input.                                    |
+| `cssClass`           | `string`            | `undefined`                | Additional CSS class applied to the phone input element.                     |
+| `name`               | `string`            | `undefined`                | HTML name attribute on the input.                                            |
 
 ## Outputs
 
-| Options        | Type                    | Default     | Description       |
-| -------------- | ----------------------- | ----------- | ----------------- |
-| countryChanged | `EventEmitter<Country>` | `undefined` | On country change |
+| Output           | Type                    | Description                                   |
+| ---------------- | ----------------------- | --------------------------------------------- |
+| `countryChanged` | `EventEmitter<Country>` | Emits the selected `Country` when it changes. |
 
-## Css variable
+## Exports
 
-| Name                                  | Default        | Explanation                                                                   |
-| ------------------------------------- | -------------- | ----------------------------------------------------------------------------- |
-| `--mat-tel-input-opacity`             | `1`            | If you wish both, the country flag and the placeholder to be shown by default |
-| `--mat-tel-input-selector-opacity`    | `1`            | If you wish the country flag to be shown by default                           |
-| `--mat-tel-input-placeholder-opacity` | `1`            | If you wish the placeholder flag to be shown by default                       |
-| `--mat-tel-input-flag-display`        | `inline-block` | If you wish to hide the country flag                                          |
+The library exports the following for use in your application:
+
+| Export                 | Type       | Description                                                    |
+| ---------------------- | ---------- | -------------------------------------------------------------- |
+| `MatTelInput`          | Component  | The phone input component.                                     |
+| `matTelInputValidator` | Function   | Phone number validator for use with reactive forms.            |
+| `Country`              | Interface  | Country model (`name`, `iso2`, `dialCode`, `flagClass`, etc.). |
+| `PhoneNumberFormat`    | Type alias | `'default' \| 'national' \| 'international'`                   |
+
+## CSS Custom Properties
+
+All visual aspects of the component can be customized via CSS custom properties. Set these on the `mat-tel-input` element or any ancestor.
+
+### Component
+
+| Property                              | Default                                | Description                                      |
+| ------------------------------------- | -------------------------------------- | ------------------------------------------------ |
+| `--mat-tel-input-opacity`             | `1`                                    | Global opacity for the selector and placeholder. |
+| `--mat-tel-input-selector-opacity`    | _(inherits `--mat-tel-input-opacity`)_ | Country selector button opacity.                 |
+| `--mat-tel-input-placeholder-opacity` | _(inherits `--mat-tel-input-opacity`)_ | Input placeholder opacity.                       |
+| `--mat-tel-input-arrow-color`         | `currentColor`                         | Dropdown arrow color.                            |
+| `--mat-tel-input-disabled-color`      | `rgba(0,0,0,0.38)`                     | Text color when disabled.                        |
+
+### Flag
+
+| Property                             | Default        | Description                                  |
+| ------------------------------------ | -------------- | -------------------------------------------- |
+| `--mat-tel-input-flag-display`       | `inline-block` | Set to `none` to hide the country flag.      |
+| `--mat-tel-input-flag-height`        | `14px`         | Flag height.                                 |
+| `--mat-tel-input-flag-width`         | `24px`         | Flag width.                                  |
+| `--mat-tel-input-flag-border-radius` | `0`            | Flag border radius (e.g. `2px` for rounded). |
+
+### Dial Code
+
+| Property                              | Default   | Description           |
+| ------------------------------------- | --------- | --------------------- |
+| `--mat-tel-input-dial-code-color`     | `inherit` | Dial code text color. |
+| `--mat-tel-input-dial-code-font-size` | `inherit` | Dial code font size.  |
+
+### Country Dropdown
+
+| Property                                   | Default            | Description                            |
+| ------------------------------------------ | ------------------ | -------------------------------------- |
+| `--mat-tel-input-dropdown-max-height`      | `400px`            | Max height of the country dropdown.    |
+| `--mat-tel-input-country-text-color`       | `rgba(0,0,0,0.87)` | Text color of country list items.      |
+| `--mat-tel-input-search-border-color`      | `rgba(0,0,0,0.12)` | Border color of the search input.      |
+| `--mat-tel-input-search-bg`                | `#fff`             | Background of the search input.        |
+| `--mat-tel-input-search-color`             | `inherit`          | Text color of the search input.        |
+| `--mat-tel-input-search-placeholder-color` | `rgba(0,0,0,0.6)`  | Placeholder color of the search input. |
+
+### Example: Custom Styling
+
+```css
+mat-tel-input {
+  --mat-tel-input-flag-border-radius: 2px;
+  --mat-tel-input-arrow-color: #666;
+  --mat-tel-input-dial-code-color: #1976d2;
+}
+```
 
 ## Validator
 
-In case you had to manually remove the validator, the library exported it so you could add it back again.
+The library exports its phone number validator so you can add it manually if needed:
 
-| Name                   | Description                                     | Example                                              |
-| ---------------------- | ----------------------------------------------- | ---------------------------------------------------- |
-| `matTelInputValidator` | The actual phone validator used for the control | `phoneControl.addValidators([matTelInputValidator])` |
+```ts
+import { matTelInputValidator } from 'mat-tel-input';
+
+this.phoneControl.addValidators([matTelInputValidator]);
+```
 
 ## Library Contributions
 
@@ -126,18 +188,11 @@ In case you had to manually remove the validator, the library exported it so you
 
 ### Helpful commands
 
-- Copy license and readme files: `$ npm run copy-files`
-- Publish package: `$ npm run publish`
-
-<!-- ### Use locally
-
-After building and creating package, you can use it locally too.
-
-In your project run:
-
-`$ npm install --save {{path to your local '*.tgz' package file}}` -->
+- Build library: `yarn nx build mat-tel-input`
+- Run tests: `yarn nx test mat-tel-input`
+- Publish package: `yarn publish`
 
 ## Authors and acknowledgment
 
 - Maintainer [Munir I Said](https://github.com/Muneersahel)
-- Forked from [ngx-mat-input-tel](https://github.com/rbalet/ngx-mat-input-tel)
+- Originally forked from [ngx-mat-input-tel](https://github.com/rbalet/ngx-mat-input-tel)
