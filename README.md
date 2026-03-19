@@ -7,6 +7,8 @@ An Angular Material package for entering and validating international telephone 
 ![npm bundle size](https://img.shields.io/bundlephobia/min/mat-tel-input)
 ![npm](https://img.shields.io/npm/dm/mat-tel-input)
 
+**[Live Demo](https://mattelinput.muneersahel.com)**
+
 **Supports:**
 
 - Angular v21
@@ -136,8 +138,6 @@ All visual aspects of the component can be customized via CSS custom properties.
 | Property                             | Default        | Description                                  |
 | ------------------------------------ | -------------- | -------------------------------------------- |
 | `--mat-tel-input-flag-display`       | `inline-block` | Set to `none` to hide the country flag.      |
-| `--mat-tel-input-flag-height`        | `14px`         | Flag height.                                 |
-| `--mat-tel-input-flag-width`         | `24px`         | Flag width.                                  |
 | `--mat-tel-input-flag-border-radius` | `0`            | Flag border radius (e.g. `2px` for rounded). |
 
 ### Dial Code

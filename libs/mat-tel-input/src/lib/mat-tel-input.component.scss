@@ -88,8 +88,8 @@ input {
     size: 100% auto;
   }
   filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.54));
-  height: var(--mat-tel-input-flag-height, 14px);
-  width: var(--mat-tel-input-flag-width, 24px);
+  height: 14px;
+  width: 24px;
   border-radius: var(--mat-tel-input-flag-border-radius, 0);
 }
 
