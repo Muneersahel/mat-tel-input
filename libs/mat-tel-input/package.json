@@ -34,12 +34,13 @@
     "tslib": "^2.x"
   },
   "peerDependencies": {
-    "@angular/common": "19.x",
-    "@angular/core": "19.x",
-    "@angular/material": "19.x",
-    "@angular/forms": "19.x",
-    "@angular/platform-browser": "19.x",
-    "@angular/platform-browser-dynamic": "19.x",
+    "@angular/cdk": "21.x",
+    "@angular/common": "21.x",
+    "@angular/core": "21.x",
+    "@angular/forms": "21.x",
+    "@angular/material": "21.x",
+    "@angular/platform-browser": "21.x",
+    "@angular/platform-browser-dynamic": "21.x",
     "libphonenumber-js": "^1.11.16"
   }
 }
