@@ -1,3 +1,13 @@
+## 21.1.1 (2026-03-25)
+
+### 🩹 Fixes
+
+- update Angular 21 peer dependencies ([be4f561](https://github.com/Muneersahel/mat-tel-input/commit/be4f561))
+
+### ❤️ Thank You
+
+- Munir Issa Said @Muneersahel
+
 ## 21.1.0 (2026-03-19)
 
 This was a version bump only, there were no code changes.
