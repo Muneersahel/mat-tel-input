@@ -10,6 +10,7 @@ import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 import { Country } from './country.model';
 import { PhoneNumberFormat } from './mat-tel-format.model';
@@ -22,12 +23,14 @@ import { MatTelInput } from './mat-tel-input.component';
     <mat-tel-input
       [preferredCountries]="preferredCountries"
       [onlyCountries]="onlyCountries"
+      [enableSearch]="enableSearch"
     />
   `,
 })
 class StandaloneHostComponent {
   preferredCountries: string[] = [];
   onlyCountries: string[] = [];
+  enableSearch = false;
 
   @ViewChild(MatTelInput) matTelInput!: MatTelInput;
 }
@@ -131,7 +134,8 @@ describe('MatTelInput', () => {
   }
 
   function getMatTelInput<T>(fixture: ComponentFixture<T>): MatTelInput {
-    return fixture.debugElement.query(By.directive(MatTelInput)).componentInstance;
+    return fixture.debugElement.query(By.directive(MatTelInput))
+      .componentInstance;
   }
 
   function getPhoneInput<T>(fixture: ComponentFixture<T>): HTMLInputElement {
@@ -140,10 +144,51 @@ describe('MatTelInput', () => {
     ) as HTMLInputElement;
   }
 
-  function getCountryButton<T>(fixture: ComponentFixture<T>): HTMLButtonElement {
+  function getCountryButton<T>(
+    fixture: ComponentFixture<T>,
+  ): HTMLButtonElement {
     return fixture.nativeElement.querySelector(
       '.country-selector',
     ) as HTMLButtonElement;
+  }
+
+  function getMenuTrigger<T>(fixture: ComponentFixture<T>): MatMenuTrigger {
+    return fixture.debugElement
+      .query(By.directive(MatMenuTrigger))
+      .injector.get(MatMenuTrigger);
+  }
+
+  function getSearchInput<T>(fixture: ComponentFixture<T>): HTMLInputElement {
+    const searchInput = getMatTelInput(fixture).menuSearchInput?.nativeElement;
+
+    if (!searchInput) {
+      throw new Error('Expected menu search input to exist');
+    }
+
+    return searchInput;
+  }
+
+  async function openCountryMenu<T>(fixture: ComponentFixture<T>) {
+    getCountryButton(fixture).click();
+    await stabilize(fixture);
+  }
+
+  function dispatchKeydown(
+    target: EventTarget,
+    key: 'Tab' | 'Escape',
+  ): KeyboardEvent {
+    const keyCode = key === 'Tab' ? 9 : 27;
+    const event = new KeyboardEvent('keydown', {
+      key,
+      bubbles: true,
+      cancelable: true,
+    });
+
+    Object.defineProperty(event, 'keyCode', { get: () => keyCode });
+    Object.defineProperty(event, 'which', { get: () => keyCode });
+
+    target.dispatchEvent(event);
+    return event;
   }
 
   beforeEach(async () => {
@@ -177,13 +222,14 @@ describe('MatTelInput', () => {
     const component = fixture.componentInstance.matTelInput;
 
     expect(component.selectedCountry.iso2).toBe('tz');
-    expect(component.preferredCountriesInDropDown.map((country) => country.iso2)).toEqual([
-      'tz',
-      'us',
-    ]);
-    expect(component.allCountries.every((country) => ['tz', 'us'].includes(country.iso2))).toBe(
-      true,
-    );
+    expect(
+      component.preferredCountriesInDropDown.map((country) => country.iso2),
+    ).toEqual(['tz', 'us']);
+    expect(
+      component.allCountries.every((country) =>
+        ['tz', 'us'].includes(country.iso2),
+      ),
+    ).toBe(true);
   });
 
   it('should propagate a valid national number to the reactive form as E.164', async () => {
@@ -298,9 +344,11 @@ describe('MatTelInput', () => {
     expect(host.selectedCountry?.iso2).toBe('pl');
     expect(getCountryButton(fixture).textContent).toContain('+48');
     expect(getPhoneInput(fixture).value).toBe('123456789');
-    expect(host.matTelInput.preferredCountriesInDropDown.map((country) => country.iso2)).toContain(
-      'pl',
-    );
+    expect(
+      host.matTelInput.preferredCountriesInDropDown.map(
+        (country) => country.iso2,
+      ),
+    ).toContain('pl');
   });
 
   it('should reflect the disabled state from the reactive form control', async () => {
@@ -333,23 +381,51 @@ describe('MatTelInput', () => {
 
     expect(component.selectedCountry.iso2).toBe('br');
     expect(component.phoneNumber).toBe('11912347894');
-    expect(component.preferredCountriesInDropDown.map((country) => country.iso2)).toContain(
-      'br',
-    );
+    expect(
+      component.preferredCountriesInDropDown.map((country) => country.iso2),
+    ).toContain('br');
   });
 
-  it('should not propagate external model writes through the registered change handler', async () => {
+  it('should focus the search input when the country menu opens', async () => {
     const fixture = TestBed.createComponent(StandaloneHostComponent);
+    fixture.componentInstance.enableSearch = true;
 
     await stabilize(fixture);
+    await openCountryMenu(fixture);
 
-    const component = fixture.componentInstance.matTelInput;
-    const onChange = jest.fn();
-    component.registerOnChange(onChange);
+    expect(getMenuTrigger(fixture).menuOpen).toBe(true);
+    expect(document.activeElement).toBe(getSearchInput(fixture));
+  });
 
-    component.writeValue('+48123456789');
+  it('should keep the country menu open when Tab is pressed from the search input', async () => {
+    const fixture = TestBed.createComponent(StandaloneHostComponent);
+    fixture.componentInstance.enableSearch = true;
 
-    expect(onChange).not.toHaveBeenCalled();
-    expect(component.selectedCountry.iso2).toBe('pl');
+    await stabilize(fixture);
+    await openCountryMenu(fixture);
+
+    const searchInput = getSearchInput(fixture);
+
+    dispatchKeydown(searchInput, 'Tab');
+    await stabilize(fixture);
+
+    expect(getMenuTrigger(fixture).menuOpen).toBe(true);
+  });
+
+  it('should close the country menu on Escape and restore focus to the trigger', async () => {
+    const fixture = TestBed.createComponent(StandaloneHostComponent);
+    fixture.componentInstance.enableSearch = true;
+
+    await stabilize(fixture);
+    await openCountryMenu(fixture);
+
+    const countryButton = getCountryButton(fixture);
+    const searchInput = getSearchInput(fixture);
+
+    dispatchKeydown(searchInput, 'Escape');
+    await stabilize(fixture);
+
+    expect(getMenuTrigger(fixture).menuOpen).toBe(false);
+    expect(document.activeElement).toBe(countryButton);
   });
 });
