@@ -148,6 +148,84 @@ export class MyComponent {{ '{' }}{{ '}' }}</code></pre>
       </div>
     </section>
 
+    <!-- ==================== Initial Values ==================== -->
+    <section id="initial-values">
+      <h2 class="section-title">Initial Value Hydration</h2>
+      <p class="section-desc">
+        Pass an E.164 number as the initial value and the country selector
+        automatically detects the correct flag. Try switching between seeds.
+      </p>
+      <div class="grid md:grid-cols-2 gap-6 items-start">
+        <mat-card appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>Live Demo</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="pt-4">
+            <mat-form-field class="w-full" appearance="outline">
+              <mat-label>Phone</mat-label>
+              <mat-tel-input
+                [formControl]="hydrationDemoControl"
+                [preferredCountries]="['us', 'gb']"
+                enablePlaceholder
+                enableSearch
+                (countryChanged)="onHydrationCountryChanged($event)"
+              ></mat-tel-input>
+              <mat-hint>
+                Country auto-detects from the E.164 value
+              </mat-hint>
+            </mat-form-field>
+
+            <div class="flex flex-wrap gap-2 mt-4">
+              @for (scenario of hydrationDemoScenarios; track scenario.value) {
+                <button
+                  mat-stroked-button
+                  type="button"
+                  (click)="loadHydrationScenario(scenario.value)"
+                >
+                  {{ scenario.label }}
+                </button>
+              }
+            </div>
+
+            <div class="state-panel mt-4 space-y-1">
+              <div>
+                <strong>Country:</strong>
+                {{ hydrationSelectedCountry?.name || 'Awaiting...' }}
+                @if (hydrationSelectedCountry?.dialCode) {
+                  (+{{ hydrationSelectedCountry?.dialCode }})
+                }
+              </div>
+              <div>
+                <strong>Value:</strong> {{ hydrationDemoControl.value }}
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>Code</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <pre class="code-block"><code>phoneControl = new FormControl('+48123456789');
+
+&lt;mat-form-field appearance="outline"&gt;
+  &lt;mat-label&gt;Phone&lt;/mat-label&gt;
+  &lt;mat-tel-input
+    [formControl]="phoneControl"
+    enablePlaceholder
+    enableSearch
+  &gt;&lt;/mat-tel-input&gt;
+&lt;/mat-form-field&gt;</code></pre>
+            <p class="text-xs text-gray-500 mt-4">
+              Ideal for restoring saved profile numbers, draft forms, or API
+              payloads that arrive in international format.
+            </p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </section>
+
     <!-- ==================== Appearances ==================== -->
     <section id="appearances">
       <h2 class="section-title">Form Field Appearances</h2>
@@ -217,7 +295,6 @@ export class MyComponent {{ '{' }}{{ '}' }}</code></pre>
                   [preferredCountries]="playgroundPreferredList"
                   [onlyCountries]="playgroundOnlyList"
                   [resetOnChange]="playgroundResetOnChange"
-                  [disabled]="playgroundDisabled"
                   [required]="playgroundRequired"
                   [maxLength]="playgroundMaxLength"
                   (countryChanged)="onPlaygroundCountryChanged($event)"
