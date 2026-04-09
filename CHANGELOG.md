@@ -1,3 +1,16 @@
+## 21.1.2 (2026-04-09)
+
+### 🩹 Fixes
+
+- update Angular 21 peer dependencies ([be4f561](https://github.com/Muneersahel/mat-tel-input/commit/be4f561))
+- hydrate country selector from initial FormControl value ([#20](https://github.com/Muneersahel/mat-tel-input/issues/20))
+- **mat-tel-input:** preserve search focus inside country menu ([#21](https://github.com/Muneersahel/mat-tel-input/issues/21))
+
+### ❤️ Thank You
+
+- Munir I Said @Muneersahel
+- Munir Issa Said @Muneersahel
+
 ## 21.1.1 (2026-03-25)
 
 ### 🩹 Fixes
