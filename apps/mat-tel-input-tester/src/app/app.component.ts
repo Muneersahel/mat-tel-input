@@ -2,6 +2,7 @@ import { JsonPipe, NgStyle } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import {
   FormBuilder,
+  FormControl,
   FormsModule,
   ReactiveFormsModule,
   Validators,
@@ -21,6 +22,12 @@ import {
   matTelInputValidator,
   PhoneNumberFormat,
 } from 'mat-tel-input';
+
+type HydrationScenario = {
+  label: string;
+  value: string;
+  country: Pick<Country, 'name' | 'iso2' | 'dialCode'>;
+};
 
 @Component({
   imports: [
@@ -48,6 +55,7 @@ export class AppComponent {
   readonly sections = [
     { id: 'getting-started', label: 'Getting Started' },
     { id: 'basic-usage', label: 'Basic Usage' },
+    { id: 'initial-values', label: 'Initial Values' },
     { id: 'appearances', label: 'Appearances' },
     { id: 'playground', label: 'Playground' },
     { id: 'formatting', label: 'Formatting' },
@@ -61,6 +69,41 @@ export class AppComponent {
   basicForm = this.fb.group({
     phone: ['', [Validators.required]],
   });
+  readonly hydrationDemoScenarios: HydrationScenario[] = [
+    {
+      label: 'Poland seed',
+      value: '+48123456789',
+      country: {
+        name: 'Poland',
+        iso2: 'pl',
+        dialCode: '48',
+      },
+    },
+    {
+      label: 'Brazil seed',
+      value: '+5511912347894',
+      country: {
+        name: 'Brazil',
+        iso2: 'br',
+        dialCode: '55',
+      },
+    },
+    {
+      label: 'US seed',
+      value: '+16502530000',
+      country: {
+        name: 'United States',
+        iso2: 'us',
+        dialCode: '1',
+      },
+    },
+  ];
+  hydrationDemoControl = new FormControl('+48123456789', {
+    nonNullable: true,
+    validators: [Validators.required],
+  });
+  hydrationSelectedCountry: Pick<Country, 'name' | 'iso2' | 'dialCode'> | null =
+    this.hydrationDemoScenarios[0].country;
 
   // Appearances
   outlinePhone = '';
@@ -74,7 +117,7 @@ export class AppComponent {
   playgroundPreferredCountries = 'us, gb';
   playgroundOnlyCountries = '';
   playgroundResetOnChange = false;
-  playgroundDisabled = false;
+  private _playgroundDisabled = false;
   playgroundRequired = false;
   playgroundMaxLength = 15;
   playgroundSelectedCountry: Country | null = null;
@@ -115,8 +158,43 @@ export class AppComponent {
       .filter(Boolean);
   }
 
+  get playgroundDisabled(): boolean {
+    return this._playgroundDisabled;
+  }
+
+  set playgroundDisabled(value: boolean) {
+    if (this._playgroundDisabled === value) {
+      return;
+    }
+
+    this._playgroundDisabled = value;
+
+    const control = this.playgroundForm.controls.phone;
+    if (value) {
+      control.disable({ emitEvent: false });
+    } else {
+      control.enable({ emitEvent: false });
+    }
+  }
+
   onPlaygroundCountryChanged(country: Country): void {
     this.playgroundSelectedCountry = country;
+  }
+
+  onHydrationCountryChanged(country: Country): void {
+    this.hydrationSelectedCountry = country;
+  }
+
+  loadHydrationScenario(value: string): void {
+    const scenario = this.hydrationDemoScenarios.find(
+      (candidate) => candidate.value === value,
+    );
+
+    if (scenario) {
+      this.hydrationSelectedCountry = scenario.country;
+    }
+
+    this.hydrationDemoControl.setValue(value);
   }
 
   get themingStyles(): Record<string, string> {

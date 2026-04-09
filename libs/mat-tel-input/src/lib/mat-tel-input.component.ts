@@ -219,6 +219,10 @@ export class MatTelInput
       );
     }
 
+    if (!this.numberInstance && this.ngControl?.control?.value) {
+      this._hydrateFromValue(this.ngControl.control.value);
+    }
+
     this._setDefaultCountry();
 
     this._changeDetectorRef.markForCheck();
@@ -244,16 +248,47 @@ export class MatTelInput
   }
 
   private _setDefaultCountry() {
-    if (this.numberInstance?.country) {
-      // If an existing number is present, we use it to determine selectedCountry
-      this.selectedCountry = this.getCountry(this.numberInstance.country);
-    } else if (this.preferredCountriesInDropDown.length) {
+    if (this._syncSelectedCountryFromNumber()) {
+      return;
+    }
+
+    if (this.preferredCountriesInDropDown.length) {
       this.selectedCountry = this.preferredCountriesInDropDown[0];
     } else {
       this.selectedCountry = this.allCountries[0];
     }
 
     this.countryChanged.emit(this.selectedCountry);
+  }
+
+  private _syncSelectedCountryFromNumber(): boolean {
+    const countryCode = this.numberInstance?.country;
+
+    if (!countryCode || !this.allCountries.length) {
+      return false;
+    }
+
+    const resolvedCountry = this.allCountries.find(
+      (country) => country.iso2 === countryCode.toLowerCase(),
+    );
+
+    if (!resolvedCountry?.dialCode) {
+      return false;
+    }
+
+    this.selectedCountry = resolvedCountry;
+
+    if (
+      !this.preferredCountries.includes(resolvedCountry.iso2) &&
+      !this.preferredCountriesInDropDown.some(
+        (country) => country.iso2 === resolvedCountry.iso2,
+      )
+    ) {
+      this.preferredCountriesInDropDown.push(resolvedCountry);
+    }
+
+    this.countryChanged.emit(this.selectedCountry);
+    return true;
   }
 
   ngDoCheck(): void {
@@ -402,39 +437,38 @@ export class MatTelInput
     this.stateChanges.next(undefined);
   }
 
-  writeValue(value: any): void {
-    if (value) {
-      this.numberInstance = parsePhoneNumberFromString(value);
-      if (this.numberInstance) {
-        const countryCode = this.numberInstance.country;
-        this.phoneNumber = this.formattedPhoneNumber();
-
-        if (!countryCode) return;
-
-        this.selectedCountry = this.getCountry(countryCode);
-        if (
-          this.selectedCountry.dialCode &&
-          !this.preferredCountries.includes(this.selectedCountry.iso2)
-        ) {
-          this.preferredCountriesInDropDown.push(this.selectedCountry);
-        }
-        this.countryChanged.emit(this.selectedCountry);
-
-        // Initial value is set
-        this.stateChanges.next();
-      } else {
-        this.phoneNumber = value;
-        this.stateChanges.next(undefined);
-      }
+  private _hydrateFromValue(value: any): void {
+    if (!value) {
+      this.numberInstance = undefined;
+      this.phoneNumber = '' as E164Number | NationalNumber;
+      this._previousFormattedNumber = undefined;
+      return;
     }
-    // Angular bug
-    // else if (this.phoneNumber !== '') {
-    //   this.reset()
-    // }
 
-    // Value is set from outside using setValue()
-    this.onPhoneNumberChange();
+    this.numberInstance = parsePhoneNumberFromString(value);
+
+    if (this.numberInstance) {
+      this.phoneNumber = this.formattedPhoneNumber();
+      this._previousFormattedNumber = this.phoneNumber.toString();
+      return;
+    }
+
+    this.phoneNumber = value;
+    this._previousFormattedNumber = value.toString();
+  }
+
+  writeValue(value: any): void {
+    // External control writes should hydrate the view without echoing the value
+    // back through the ControlValueAccessor change callback.
+    this.value = value;
+    this._hydrateFromValue(value);
+
+    if (this.numberInstance) {
+      this._syncSelectedCountryFromNumber();
+    }
+
     this._changeDetectorRef.markForCheck();
+    this.stateChanges.next();
   }
 
   setDescribedByIds(ids: string[]) {

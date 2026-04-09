@@ -45,7 +45,7 @@ class StandaloneHostComponent {
           [format]="format"
           [resetOnChange]="resetOnChange"
           [enablePlaceholder]="enablePlaceholder"
-          (countryChanged)="selectedCountry = $event"
+          (countryChanged)="onCountryChanged($event)"
         />
       </mat-form-field>
     </form>
@@ -62,8 +62,44 @@ class ReactiveHostComponent {
   resetOnChange = false;
   enablePlaceholder = false;
   selectedCountry?: Country;
+  countryChanges: string[] = [];
 
   @ViewChild(MatTelInput) matTelInput!: MatTelInput;
+
+  onCountryChanged(country: Country): void {
+    this.selectedCountry = country;
+    this.countryChanges.push(country.iso2);
+  }
+}
+
+@Component({
+  standalone: true,
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatTelInput],
+  template: `
+    <mat-form-field>
+      <mat-label>Phone</mat-label>
+      <mat-tel-input
+        [formControl]="phone"
+        [preferredCountries]="preferredCountries"
+        [format]="format"
+        (countryChanged)="onCountryChanged($event)"
+      />
+    </mat-form-field>
+  `,
+})
+class DirectFormControlHostComponent {
+  phone = new FormControl<string | null>('+48123456789');
+  preferredCountries: string[] = ['us'];
+  format: PhoneNumberFormat = 'default';
+  selectedCountry?: Country;
+  countryChanges: string[] = [];
+
+  @ViewChild(MatTelInput) matTelInput!: MatTelInput;
+
+  onCountryChanged(country: Country): void {
+    this.selectedCountry = country;
+    this.countryChanges.push(country.iso2);
+  }
 }
 
 @Component({
@@ -116,6 +152,7 @@ describe('MatTelInput', () => {
         NoopAnimationsModule,
         StandaloneHostComponent,
         ReactiveHostComponent,
+        DirectFormControlHostComponent,
         NgModelHostComponent,
       ],
     }).compileComponents();
@@ -162,6 +199,35 @@ describe('MatTelInput', () => {
     expect(host.form.controls.phone.value).toBe('+16502530000');
     expect(host.matTelInput.selectedCountry.iso2).toBe('us');
     expect(host.selectedCountry?.iso2).toBe('us');
+  });
+
+  it('should detect the selected country from an initial [formControl] international value', async () => {
+    const fixture = TestBed.createComponent(DirectFormControlHostComponent);
+
+    await stabilize(fixture);
+
+    const host = fixture.componentInstance;
+
+    expect(host.matTelInput.selectedCountry.iso2).toBe('pl');
+    expect(host.selectedCountry?.iso2).toBe('pl');
+    expect(host.countryChanges).toEqual(['pl']);
+    expect(getCountryButton(fixture).textContent).toContain('+48');
+    expect(getPhoneInput(fixture).value).toBe('123456789');
+  });
+
+  it('should detect the selected country from a pre-seeded reactive form control value', async () => {
+    const fixture = TestBed.createComponent(ReactiveHostComponent);
+    fixture.componentInstance.form.controls.phone.setValue('+48123456789');
+
+    await stabilize(fixture);
+
+    const host = fixture.componentInstance;
+
+    expect(host.matTelInput.selectedCountry.iso2).toBe('pl');
+    expect(host.selectedCountry?.iso2).toBe('pl');
+    expect(host.countryChanges).toEqual(['pl']);
+    expect(getCountryButton(fixture).textContent).toContain('+48');
+    expect(getPhoneInput(fixture).value).toBe('123456789');
   });
 
   it('should format the visible value while keeping the control value normalized', async () => {
@@ -218,6 +284,25 @@ describe('MatTelInput', () => {
     expect(host.matTelInput.selectedCountry.iso2).toBe('tz');
   });
 
+  it('should update the country when the reactive form value is set programmatically after init', async () => {
+    const fixture = TestBed.createComponent(ReactiveHostComponent);
+
+    await stabilize(fixture);
+
+    const host = fixture.componentInstance;
+    host.form.controls.phone.setValue('+48123456789');
+    await stabilize(fixture);
+
+    expect(host.form.controls.phone.value).toBe('+48123456789');
+    expect(host.matTelInput.selectedCountry.iso2).toBe('pl');
+    expect(host.selectedCountry?.iso2).toBe('pl');
+    expect(getCountryButton(fixture).textContent).toContain('+48');
+    expect(getPhoneInput(fixture).value).toBe('123456789');
+    expect(host.matTelInput.preferredCountriesInDropDown.map((country) => country.iso2)).toContain(
+      'pl',
+    );
+  });
+
   it('should reflect the disabled state from the reactive form control', async () => {
     const fixture = TestBed.createComponent(ReactiveHostComponent);
 
@@ -251,5 +336,20 @@ describe('MatTelInput', () => {
     expect(component.preferredCountriesInDropDown.map((country) => country.iso2)).toContain(
       'br',
     );
+  });
+
+  it('should not propagate external model writes through the registered change handler', async () => {
+    const fixture = TestBed.createComponent(StandaloneHostComponent);
+
+    await stabilize(fixture);
+
+    const component = fixture.componentInstance.matTelInput;
+    const onChange = jest.fn();
+    component.registerOnChange(onChange);
+
+    component.writeValue('+48123456789');
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(component.selectedCountry.iso2).toBe('pl');
   });
 });
