@@ -10,12 +10,14 @@ import {
   EventEmitter,
   HostBinding,
   Input,
+  Injector,
   OnDestroy,
   OnInit,
   Optional,
   Output,
   Self,
   ViewChild,
+  afterNextRender,
   booleanAttribute,
 } from '@angular/core';
 import {
@@ -177,6 +179,7 @@ export class MatTelInput
     private countryCodeData: CountryCode,
     private _focusMonitor: FocusMonitor,
     private _elementRef: ElementRef<HTMLElement>,
+    private _injector: Injector,
     @Optional() @Self() _ngControl: NgControl,
     @Optional() _parentForm: NgForm,
     @Optional() _parentFormGroup: FormGroupDirective,
@@ -372,6 +375,34 @@ export class MatTelInput
 
     this.onPhoneNumberChange();
     el.focus();
+  }
+
+  public onMenuOpened(): void {
+    if (!this.enableSearch) {
+      return;
+    }
+
+    // Run after Material's deferred menu-item focus so the search input wins.
+    afterNextRender(
+      () => {
+        this.menuSearchInput?.nativeElement.focus();
+      },
+      { injector: this._injector },
+    );
+  }
+
+  public onSearchInputKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      return;
+    }
+
+    if (
+      event.key === 'Tab' ||
+      event.key.startsWith('Arrow') ||
+      event.key.length === 1
+    ) {
+      event.stopPropagation();
+    }
   }
 
   public getCountry(code: CC): Country {
