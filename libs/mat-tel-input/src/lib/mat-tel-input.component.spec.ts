@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import {
   FormControl,
   FormGroup,
@@ -6,11 +7,10 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { By } from '@angular/platform-browser';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { By } from '@angular/platform-browser';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { Country } from './country.model';
 import { PhoneNumberFormat } from './mat-tel-format.model';
@@ -126,6 +126,37 @@ class NgModelHostComponent {
   @ViewChild(MatTelInput) matTelInput!: MatTelInput;
 }
 
+@Component({
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatTelInput],
+  template: `
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <mat-form-field>
+        <mat-label>Phone number</mat-label>
+        <mat-tel-input
+          formControlName="phone"
+          [preferredCountries]="preferredCountries"
+        />
+        <mat-error>Field is required</mat-error>
+      </mat-form-field>
+      <button type="submit">submit</button>
+    </form>
+  `,
+})
+class ReactiveSubmitHostComponent {
+  form = new FormGroup({
+    phone: new FormControl<string | null>(null, {
+      validators: [Validators.required],
+    }),
+  });
+  preferredCountries: string[] = ['us'];
+  submitted = false;
+
+  onSubmit(): void {
+    this.submitted = true;
+  }
+}
+
 describe('MatTelInput', () => {
   async function stabilize<T>(fixture: ComponentFixture<T>) {
     fixture.detectChanges();
@@ -197,6 +228,7 @@ describe('MatTelInput', () => {
         NoopAnimationsModule,
         StandaloneHostComponent,
         ReactiveHostComponent,
+        ReactiveSubmitHostComponent,
         DirectFormControlHostComponent,
         NgModelHostComponent,
       ],
@@ -230,6 +262,38 @@ describe('MatTelInput', () => {
         ['tz', 'us'].includes(country.iso2),
       ),
     ).toBe(true);
+  });
+
+  it('should show the required marker when only Validators.required is used', async () => {
+    const fixture = TestBed.createComponent(ReactiveHostComponent);
+
+    await stabilize(fixture);
+
+    const marker = fixture.nativeElement.querySelector(
+      '.mat-mdc-form-field-required-marker',
+    );
+
+    expect(marker).toBeTruthy();
+  });
+
+  it('should show error state after reactive form submit when the field is invalid', async () => {
+    const fixture = TestBed.createComponent(ReactiveSubmitHostComponent);
+
+    await stabilize(fixture);
+
+    const submitButton = fixture.nativeElement.querySelector(
+      'button[type="submit"]',
+    ) as HTMLButtonElement;
+
+    submitButton.click();
+    await stabilize(fixture);
+
+    const invalidOutline = fixture.nativeElement.querySelector(
+      '.mdc-text-field--invalid',
+    );
+
+    expect(invalidOutline).toBeTruthy();
+    expect(fixture.componentInstance.submitted).toBe(true);
   });
 
   it('should propagate a valid national number to the reactive form as E.164', async () => {
