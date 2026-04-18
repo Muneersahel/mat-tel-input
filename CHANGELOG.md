@@ -1,3 +1,13 @@
+## 21.1.3 (2026-04-18)
+
+### 🩹 Fixes
+
+- **mat-tel-input:** required marker and submit error state for reactive forms ([#29](https://github.com/Muneersahel/mat-tel-input/pull/29))
+
+### ❤️ Thank You
+
+- Munir I Said @Muneersahel
+
 ## 21.1.2 (2026-04-09)
 
 ### 🩹 Fixes
