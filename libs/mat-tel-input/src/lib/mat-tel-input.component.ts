@@ -9,8 +9,8 @@ import {
   ElementRef,
   EventEmitter,
   HostBinding,
-  Input,
   Injector,
+  Input,
   OnDestroy,
   OnInit,
   Optional,
@@ -21,13 +21,13 @@ import {
   booleanAttribute,
 } from '@angular/core';
 import {
-  FormControl,
   FormGroupDirective,
   FormsModule,
   NG_VALIDATORS,
   NgControl,
   NgForm,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { ErrorStateMatcher, MatRippleModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
@@ -128,14 +128,18 @@ export class MatTelInput
     return this._format;
   }
 
-  private _required = false;
+  private _required?: boolean;
   @Input({ transform: booleanAttribute })
   set required(value: boolean) {
     this._required = coerceBooleanProperty(value);
     this.stateChanges.next(undefined);
   }
   get required(): boolean {
-    return this._required;
+    return (
+      this._required ??
+      this.ngControl?.control?.hasValidator(Validators.required) ??
+      false
+    );
   }
 
   private _disabled = false;
@@ -232,21 +236,21 @@ export class MatTelInput
     this.stateChanges.next();
   }
 
-  updateErrorState() {
-    if (
-      this.ngControl &&
-      this.ngControl.invalid &&
-      (this.ngControl.touched ||
-        (this._parentForm && this._parentForm.submitted))
-    ) {
-      const currentState = this.errorStateMatcher.isErrorState(
-        this.ngControl.control as FormControl,
-        this.ngControl?.value,
-      );
-      if (currentState !== this.errorState) {
-        this.errorState = currentState;
-        this._changeDetectorRef.markForCheck();
-      }
+  updateErrorState(): void {
+    if (!this.ngControl) {
+      return;
+    }
+
+    const oldState = this.errorState;
+    const parent = this._parentFormGroup || this._parentForm;
+    const control = this.ngControl.control ?? null;
+    const newState =
+      this.errorStateMatcher.isErrorState(control, parent) ?? false;
+
+    if (newState !== oldState) {
+      this.errorState = newState;
+      this._changeDetectorRef.markForCheck();
+      this.stateChanges.next();
     }
   }
 
@@ -296,22 +300,7 @@ export class MatTelInput
 
   ngDoCheck(): void {
     if (this.ngControl) {
-      const oldState = this.errorState;
-      const newState = this.errorStateMatcher.isErrorState(
-        this.ngControl.control,
-        this._parentForm,
-      );
-
-      this.errorState =
-        (newState &&
-          (!this.ngControl.control?.value ||
-            this.ngControl.control?.touched)) ||
-        (!this.focused ? newState : false);
-
-      if (oldState !== newState) {
-        this.errorState = newState;
-        this.stateChanges.next();
-      }
+      this.updateErrorState();
     }
   }
 
