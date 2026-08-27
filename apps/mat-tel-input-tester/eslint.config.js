@@ -24,6 +24,9 @@ module.exports = [
           style: 'kebab-case',
         },
       ],
+      // Angular 22's compatibility migration adds the Eager strategy to
+      // preserve pre-v22 behavior, so the new preset rule cannot apply yet.
+      '@angular-eslint/prefer-on-push-component-change-detection': 'off',
     },
   },
   {

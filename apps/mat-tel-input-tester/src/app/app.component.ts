@@ -1,5 +1,5 @@
 import { JsonPipe, NgStyle } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -47,6 +47,7 @@ type HydrationScenario = {
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app.component.css',
 })
 export class AppComponent {

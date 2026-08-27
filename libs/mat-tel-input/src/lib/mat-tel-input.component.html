@@ -28,6 +28,7 @@
         #menuSearchInput
         class="country-search"
         [(ngModel)]="searchCriteria"
+        [ngModelOptions]="{ standalone: true }"
         type="text"
         [placeholder]="searchPlaceholder"
         (click)="$event.stopPropagation()"
@@ -99,6 +100,7 @@
     (blur)="onTouched()"
     (keypress)="onInputKeyPress($event)"
     [(ngModel)]="phoneNumber"
+    [ngModelOptions]="{ standalone: true }"
     (ngModelChange)="onPhoneNumberChange()"
     [errorStateMatcher]="errorStateMatcher"
     [placeholder]="placeholder || $any(selectedCountry.placeHolder)"
