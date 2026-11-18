@@ -1,3 +1,17 @@
+# 22.0.0 (2026-11-18)
+
+### 🚀 Features
+
+- ⚠️  support Angular 21 and 22 on the Angular 22 toolchain ([#31](https://github.com/Muneersahel/mat-tel-input/pull/31))
+
+### ⚠️  Breaking Changes
+
+- mat-tel-input is now built with the Angular 22 toolchain; apps on Angular 21 and 22 are supported ([#31](https://github.com/Muneersahel/mat-tel-input/pull/31))
+
+### ❤️ Thank You
+
+- Munir I Said @Muneersahel
+
 ## 21.1.3 (2026-04-18)
 
 ### 🩹 Fixes
