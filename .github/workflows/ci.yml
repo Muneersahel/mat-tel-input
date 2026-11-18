@@ -27,9 +27,13 @@ jobs:
       - run: yarn nx run-many -t lint test build --skipNxCache
 
   package-smoke:
-    name: Packed Angular 22 consumer
+    name: Packed Angular ${{ matrix.angular }} consumer
     needs: quality
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        angular: [21, 22]
 
     steps:
       - uses: actions/checkout@v7
@@ -38,4 +42,4 @@ jobs:
           node-version: 24.15.0
       - run: corepack enable
       - run: yarn install --immutable
-      - run: yarn verify-package
+      - run: yarn verify-package ${{ matrix.angular }}

@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+angular_major="${1:-22}"
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 smoke_dir="$(mktemp -d "${TMPDIR:-/tmp}/mat-tel-input-smoke.XXXXXX")"
 
@@ -21,7 +22,7 @@ if [[ -z "$package_tarball" ]]; then
 fi
 
 cd "$smoke_dir"
-npx --yes --package=@angular/cli@22.1.6 -- ng new consumer \
+npx --yes --package="@angular/cli@${angular_major}" -- ng new consumer \
   --defaults \
   --routing=false \
   --skip-git \
@@ -31,8 +32,8 @@ npx --yes --package=@angular/cli@22.1.6 -- ng new consumer \
 cd consumer
 npm install \
   "$package_tarball" \
-  @angular/cdk@22.1.4 \
-  @angular/material@22.1.4
+  "@angular/cdk@${angular_major}" \
+  "@angular/material@${angular_major}"
 
 node --input-type=module - "$PWD/src/app/app.ts" <<'NODE'
 import { writeFileSync } from 'node:fs';
