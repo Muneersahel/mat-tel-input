@@ -10,7 +10,7 @@ export const matTelInputValidator = (
   if (control.value) {
     try {
       numberInstance = parsePhoneNumber(control.value);
-    } catch (e) {
+    } catch {
       return error;
     }
 

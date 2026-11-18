@@ -46,3 +46,7 @@ Thumbs.db
 .nx/polygraph
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
+
+.claude/worktrees
+.nx/self-healing
+.nx/migrate-runs

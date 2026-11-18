@@ -13,12 +13,11 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Optional,
   Output,
-  Self,
   ViewChild,
   afterNextRender,
   booleanAttribute,
+  inject,
 } from '@angular/core';
 import {
   FormGroupDirective,
@@ -109,7 +108,7 @@ export class MatTelInput
   @Input() cssClass?: string;
   @Input() errorStateMatcher: ErrorStateMatcher =
     this._defaultErrorStateMatcher;
-  @Input() placeholder: string = '';
+  @Input() placeholder = '';
   @Input() maxLength: string | number = 15;
   @Input() name?: string;
   @Input() onlyCountries: string[] = [];
@@ -143,7 +142,7 @@ export class MatTelInput
   }
 
   private _disabled = false;
-  @Input({ alias: 'disabled', transform: booleanAttribute })
+  @Input({ transform: booleanAttribute })
   set disabled(value: boolean) {
     this._disabled = coerceBooleanProperty(value);
     this.stateChanges.next(undefined);
@@ -173,25 +172,26 @@ export class MatTelInput
   private _previousFormattedNumber?: string;
   private _format: PhoneNumberFormat = 'default';
 
-  onTouched = () => {};
-  propagateChange = (_: any) => {};
+  onTouched = (): void => undefined;
+  propagateChange: (value: unknown) => void = () => undefined;
 
   private errorState?: boolean;
 
-  constructor(
-    private _changeDetectorRef: ChangeDetectorRef,
-    private countryCodeData: CountryCode,
-    private _focusMonitor: FocusMonitor,
-    private _elementRef: ElementRef<HTMLElement>,
-    private _injector: Injector,
-    @Optional() @Self() _ngControl: NgControl,
-    @Optional() _parentForm: NgForm,
-    @Optional() _parentFormGroup: FormGroupDirective,
-    _defaultErrorStateMatcher: ErrorStateMatcher,
-  ) {
-    super(_defaultErrorStateMatcher, _parentForm, _parentFormGroup, _ngControl);
+  private readonly _changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly countryCodeData = inject(CountryCode);
+  private readonly _focusMonitor = inject(FocusMonitor);
+  private readonly _elementRef = inject(ElementRef<HTMLElement>);
+  private readonly _injector = inject(Injector);
 
-    _focusMonitor.monitor(_elementRef, true).subscribe((origin: any) => {
+  constructor() {
+    super(
+      inject(ErrorStateMatcher),
+      inject(NgForm, { optional: true }) as NgForm,
+      inject(FormGroupDirective, { optional: true }) as FormGroupDirective,
+      inject(NgControl, { optional: true, self: true }) as NgControl,
+    );
+
+    this._focusMonitor.monitor(this._elementRef, true).subscribe((origin) => {
       if (this.focused && !origin) {
         this.onTouched();
       }

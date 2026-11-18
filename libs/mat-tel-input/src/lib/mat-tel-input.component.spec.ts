@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import {
   FormControl,
@@ -19,6 +19,7 @@ import { MatTelInput } from './mat-tel-input.component';
 @Component({
   standalone: true,
   imports: [MatTelInput],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <mat-tel-input
       [preferredCountries]="preferredCountries"
@@ -38,6 +39,7 @@ class StandaloneHostComponent {
 @Component({
   standalone: true,
   imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatTelInput],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <form [formGroup]="form">
       <mat-form-field>
@@ -78,6 +80,7 @@ class ReactiveHostComponent {
 @Component({
   standalone: true,
   imports: [ReactiveFormsModule, MatFormFieldModule, MatTelInput],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <mat-form-field>
       <mat-label>Phone</mat-label>
@@ -108,6 +111,7 @@ class DirectFormControlHostComponent {
 @Component({
   standalone: true,
   imports: [FormsModule, MatFormFieldModule, MatTelInput],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <mat-form-field>
       <mat-label>Phone</mat-label>
@@ -129,6 +133,7 @@ class NgModelHostComponent {
 @Component({
   standalone: true,
   imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatTelInput],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <mat-form-field>
